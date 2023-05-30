@@ -1,10 +1,9 @@
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import s from './ImageGallery.module.css';
 
-const ImageGallery = ({ data }) => {
-  console.log(data);
+const ImageGallery = ({ data, modalOpen }) => {
   return (
-    <ul className={s.ImageGallery}>
+    <ul className={s.ImageGallery} onClick={e => modalOpen(e)}>
       {data.map(({ id, largeImageURL, webformatURL }) => (
         <ImageGalleryItem
           id={id}
@@ -17,15 +16,3 @@ const ImageGallery = ({ data }) => {
 };
 
 export default ImageGallery;
-
-// <ul>
-//   {users.map(user => (
-//     <UserItem
-//       key={user.id}
-//       userDelete={userDelete}
-//       changeJob={changeStat}
-//       showUserDetails={showUserDetails}
-//       {...user}
-//     />
-//   ))}
-// </ul>;

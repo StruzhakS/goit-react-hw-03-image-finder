@@ -1,5 +1,13 @@
 import { Component } from 'react';
 import s from './Searchbar.module.css';
+import Notiflix from 'notiflix';
+
+Notiflix.Notify.init({
+  width: '250px',
+  position: 'center-top',
+  distance: '75px',
+  timeout: '2000',
+});
 
 class Searchbar extends Component {
   state = {
@@ -7,12 +15,16 @@ class Searchbar extends Component {
   };
   handleSubmit = e => {
     e.preventDefault();
-    this.props.onSubmit(this.state.userInput);
-    this.setState({ userInput: '' });
+    if (this.state.userInput) {
+      this.props.onSubmit(this.state.userInput);
+      this.setState({ userInput: '' });
+      return;
+    }
+    Notiflix.Notify.info('Please enter a picture name');
   };
 
   handleInput = e => {
-    this.setState({ userInput: e.currentTarget.value.toLowerCase().trim() });
+    this.setState({ userInput: e.currentTarget.value.toLowerCase() });
   };
 
   render() {
