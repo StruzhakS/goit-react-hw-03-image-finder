@@ -15,7 +15,6 @@ class App extends Component {
     isShowModal: false,
     largeImg: '',
     totalHits: null,
-    per_page: 12,
     isLoading: false,
     error: false,
   };
@@ -85,8 +84,6 @@ class App extends Component {
     const {
       categories,
       totalHits,
-      per_page,
-      page,
       categoryName,
       largeImg,
       isShowModal,
