@@ -66,8 +66,7 @@ class App extends Component {
   };
 
   modalCloseByEsc = e => {
-    if (e.key === 'Escape') console.log(123);
-    this.modalClose();
+    if (e.key === 'Escape') this.modalClose();
   };
 
   handleModalClose = e => {
