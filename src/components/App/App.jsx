@@ -6,7 +6,7 @@ import { Oval } from 'react-loader-spinner';
 import { searchImages } from '../Services/GetImages';
 import Button from 'components/Button/Button';
 import Modal from 'components/Modal/Modal';
-
+import Error from 'components/error/error';
 class App extends Component {
   state = {
     categories: [],
@@ -14,6 +14,10 @@ class App extends Component {
     page: 1,
     isShowModal: false,
     largeImg: '',
+    totalHits: null,
+    per_page: 12,
+    isLoading: false,
+    error: false,
   };
 
   componentDidUpdate = (_, prevState) => {
@@ -27,22 +31,30 @@ class App extends Component {
   };
 
   getSearchPictures = async () => {
-    const data = await searchImages(this.state.categoryName, this.state.page);
-    this.setState({
-      categories: [...this.state.categories, ...data.data.hits],
-    });
+    this.setState({ isLoading: true });
+    try {
+      const data = await searchImages(this.state.categoryName, this.state.page);
+      this.setState({
+        categories: [...this.state.categories, ...data.hits],
+        totalHits: data.totalHits,
+      });
+    } catch (error) {
+      this.setState({ error: true });
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
 
   changePage = () => {
     this.setState(prev => ({ page: prev.page + 1 }));
   };
 
-  userSearch = (search, page) => {
+  userSearch = search => {
     this.setState({ categoryName: search });
     this.setState(prev =>
       prev.categoryName === this.state.categoryName
         ? this.changePage
-        : { categories: [], page: 1 }
+        : { categories: [], page: 1, error: false }
     );
   };
 
@@ -70,16 +82,28 @@ class App extends Component {
   };
 
   render() {
+    const {
+      categories,
+      totalHits,
+      per_page,
+      page,
+      categoryName,
+      largeImg,
+      isShowModal,
+      isLoading,
+      error,
+    } = this.state;
     return (
       <div className={s.app}>
         <Searchbar onSubmit={this.userSearch} />
-        <ImageGallery data={this.state.categories} modalOpen={this.modalOpen} />
-        {this.state.categories.length >= 12 && (
-          <Button changePage={this.changePage} />
-        )}
+        <ImageGallery data={categories} modalOpen={this.modalOpen} />
+        {!(Math.ceil(totalHits / per_page) === page) &&
+          categories.length >= per_page && (
+            <Button changePage={this.changePage} />
+          )}
 
         <div className={s.loader}>
-          {!this.state.categories.length && this.state.categoryName && (
+          {isLoading && (
             <Oval
               style={{
                 textAlign: 'center',
@@ -95,13 +119,14 @@ class App extends Component {
             />
           )}
         </div>
-        {this.state.isShowModal && (
+        {isShowModal && (
           <Modal
-            img={this.state.largeImg}
+            img={largeImg}
             handleModalClose={this.handleModalClose}
             modalCloseByEsc={this.modalCloseByEsc}
           />
         )}
+        {error && <Error name={categoryName} />}
       </div>
     );
   }
