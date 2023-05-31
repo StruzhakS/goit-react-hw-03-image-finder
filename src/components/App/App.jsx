@@ -54,7 +54,7 @@ class App extends Component {
     this.setState(prev =>
       prev.categoryName === this.state.categoryName
         ? this.changePage
-        : { categories: [], page: 1, error: false }
+        : { categories: [], page: 1, error: false, totalHits: 0 }
     );
   };
 
@@ -97,10 +97,9 @@ class App extends Component {
       <div className={s.app}>
         <Searchbar onSubmit={this.userSearch} />
         <ImageGallery data={categories} modalOpen={this.modalOpen} />
-        {!(Math.ceil(totalHits / per_page) === page) &&
-          categories.length >= per_page && (
-            <Button changePage={this.changePage} />
-          )}
+        {categories.length < totalHits && totalHits && (
+          <Button changePage={this.changePage} />
+        )}
 
         <div className={s.loader}>
           {isLoading && (
